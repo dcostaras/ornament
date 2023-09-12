@@ -33,6 +33,11 @@
      registry
      (atom {})))
 
+#?(:clj
+   (defonce ^{:doc "TODO"}
+     options
+     (atom {:pretty-print? false})))
+
 (def ^:dynamic *strip-prefixes*
   "Prefixes to be stripped from class names in generated CSS"
   nil)
@@ -133,6 +138,7 @@
                :fonts (into (empty fonts)
                             (map (juxt (comp name key) val))
                             fonts)})]
+         (swap! options merge configuration)
          (reset! girouette-api
                  (girouette/make-api
                   components
@@ -444,7 +450,7 @@
           (into [(str "." (classname this))]
                 (process-rules rules)))
         (css [this] (gc/compile-css
-                     {:pretty-print? false}
+                     {:pretty-print? (:pretty-print? @options)}
                      (as-garden this)))
         (rules [_] rules)
         (tag [_] tag)
