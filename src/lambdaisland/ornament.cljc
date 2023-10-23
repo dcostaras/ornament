@@ -772,12 +772,14 @@
        ;; actual styles, which are expected to be rendered on the backend or
        ;; during compilation.
        `(def ~(with-meta sym
-                {::css true
-                 :ornament (dissoc (get @registry varsym) :component :fn-tails)
-                 :arglists (if (seq fn-tails)
-                             `'~(map first fn-tails)
-                             ''([] [& children] [attrs & children]))
-                 :doc (render-docstring docstring [(into [(str "." css-class)] rules)])})
+                (merge
+                 (meta sym)
+                 {::css true
+                  :ornament (dissoc (get @registry varsym) :component :fn-tails)
+                  :arglists (if (seq fn-tails)
+                              `'~(map first fn-tails)
+                              ''([] [& children] [attrs & children]))
+                  :doc (render-docstring docstring [(into [(str "." css-class)] rules)])}))
           (styled '~varsym
                   ~css-class
                   ~tag
